@@ -1,0 +1,34 @@
+/* ページの基本設定 */
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+/* ゲーム盤全体のスタイル */
+#game-board {
+    display: grid;
+    /* 8列のグリッドを作成 */
+    grid-template-columns: repeat(8, 1fr);
+    width: 80vmin; /* 画面の小さい方の辺の80%のサイズ */
+    height: 80vmin;
+    border: 2px solid #333;
+    background-color: #fff;
+}
+
+/* マス一つ一つのスタイル */
+.square {
+    border: 1px solid #ddd;
+    /* マスにカーソルを乗せたらポインターにする */
+    cursor: pointer;
+}
+
+/* マスにカーソルを乗せた時のスタイル */
+.square:hover {
+    background-color: #e9e9e9;
+}
