@@ -131,7 +131,7 @@ addPointsBtn.addEventListener('click', () => {
         alert("先にアクティブなプレイヤーを選択してください。");
         return;
     }
-    const distance = parseInt(distanceInput.value);
+    const distance = parseFloat(distanceInput.value);
     if (isNaN(distance) || distance <= 0) {
         alert("正しい距離をkm単位で入力してください。");
         return;
