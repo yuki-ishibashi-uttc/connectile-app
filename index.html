@@ -4,38 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connectile Game Board</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Connectile</h1>
 
-    <div id="player-selector">
-        <button class="player-btn player1" data-player="1">Player 1 (赤)</button>
-        <button class="player-btn player2" data-player="2">Player 2 (青)</button>
-        <button class="player-btn player3" data-player="3">Player 3 (黄)</button>
-        <button class="player-btn player4" data-player="4">Player 4 (緑)</button>
-    </div>
-    <p>現在のアクティブプレイヤー: <span id="current-player-display">なし</span></p>
+    <div class="app-container">
 
-    <div id="action-panel">
-        <div class="point-display">
-            <p>P1 ポイント: <span id="points-p1">0</span></p>
-            <p>P2 ポイント: <span id="points-p2">0</span></p>
-            <p>P3 ポイント: <span id="points-p3">0</span></p>
-            <p>P4 ポイント: <span id="points-p4">0</span></p>
+        <header class="app-header">
+            <h1 class="app-title">Connectile</h1>
+            <p class="app-subtitle">ランニング陣取りバトル</p>
+        </header>
+
+        <div id="player-selector">
+            <button class="player-btn player1" data-player="1">P1</button>
+            <button class="player-btn player2" data-player="2">P2</button>
+            <button class="player-btn player3" data-player="3">P3</button>
+            <button class="player-btn player4" data-player="4">P4</button>
         </div>
-        <div class="input-form">
-            <input type="number" id="distance-input" placeholder="走った距離(km)">
-            <button id="add-points-btn">ポイント追加</button>
-        </div>
-    </div> <div id="utility-panel">
-        <button id="save-btn">セーブ</button>
-        <button id="reset-btn">リセット</button>
-    </div>
+        <p class="active-player-text">現在のアクティブプレイヤー: <span id="current-player-display">なし</span></p>
 
-    <div id="game-board">
-        </div>
+        <div id="game-board">
+            </div>
 
-    <script src="script.js"></script>
+        <div id="game-controls">
+            <div class="point-display">
+                <p>P1 ポイント: <span id="points-p1">0</span></p>
+                <p>P2 ポイント: <span id="points-p2">0</span></p>
+                <p>P3 ポイント: <span id="points-p3">0</span></p>
+                <p>P4 ポイント: <span id="points-p4">0</span></p>
+            </div>
+            
+            <div class="input-form">
+                <input type="number" id="distance-input" placeholder="走った距離(km)" step="0.1" min="0">
+                <button id="add-points-btn">ポイント追加</button>
+            </div>
+            
+            <div class="utility-buttons">
+                <button id="save-btn" class="secondary-btn">セーブ</button>
+                <button id="reset-btn" class="danger-btn">リセット</button>
+            </div>
+        </div>
+        
+    </div> <script src="script.js"></script>
 </body>
 </html>
