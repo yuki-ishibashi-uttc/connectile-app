@@ -5,9 +5,14 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
+}
+
+h1 {
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 /* ゲーム盤全体のスタイル */
@@ -15,10 +20,11 @@ body {
     display: grid;
     /* 8列のグリッドを作成 */
     grid-template-columns: repeat(8, 1fr);
-    width: 80vmin; /* 画面の小さい方の辺の80%のサイズ */
-    height: 80vmin;
+    width: 75vmin;
+    height: 75vmin;
     border: 2px solid #333;
     background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* マス一つ一つのスタイル */
@@ -26,9 +32,118 @@ body {
     border: 1px solid #ddd;
     /* マスにカーソルを乗せたらポインターにする */
     cursor: pointer;
+    transition: background-color 0.2s; /* 色が変わる時なめらかに */
 }
 
 /* マスにカーソルを乗せた時のスタイル */
 .square:hover {
     background-color: #e9e9e9;
+}
+
+/* プレイヤーごとの色のクラス */
+.player1 { background-color: #E74C3C; } /* 赤色 */
+.player2 { background-color: #3498DB; } /* 青色 */
+.player3 { background-color: #F1C40F; } /* 黄色 */
+.player4 { background-color: #2ECC71; } /* 緑色 */
+
+
+/* プレイヤー選択ボタンのスタイル */
+#player-selector {
+    margin-bottom: 10px;
+}
+
+.player-btn {
+    padding: 10px 15px;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.player-btn.active {
+    border-color: #000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* アクションパネルのスタイル */
+#action-panel {
+    display: flex; /* 要素を横並びにする */
+    justify-content: space-between; /* 両端に寄せる */
+    align-items: center; /* 上下中央揃え */
+    width: 75vmin;
+    margin-bottom: 10px; /* utility-panelとの間隔を調整 */
+    background-color: #333;
+    padding: 15px;
+    border-radius: 5px;
+    box-sizing: border-box; /* paddingを含めて幅を計算 */
+}
+
+.point-display {
+    width: 50%; /* 左側半分をスペースとして確保 */
+    color: white;
+}
+
+.point-display p {
+    margin: 4px 0; /* 少しだけ上下の余白を調整 */
+    font-size: 14px;
+}
+
+.input-form {
+    width: 50%; /* 右側半分をスペースとして確保 */
+    text-align: right; /* 中身を右寄せにする */
+}
+
+.input-form input {
+    width: 150px;
+    padding: 8px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
+
+.input-form button {
+    padding: 8px 12px;
+    border-radius: 3px;
+    border: none;
+    background-color: #2ECC71;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.input-form button:hover {
+    background-color: #27ae60;
+}
+
+/* ユーティリティ（便利機能）パネルのスタイル */
+#utility-panel {
+    width: 75vmin;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-end; /* ボタンを右寄せにする */
+    gap: 10px; /* ボタン間の隙間 */
+}
+
+#utility-panel button {
+    padding: 8px 15px;
+    border-radius: 3px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#save-btn {
+    background-color: #3498DB; /* 青色 */
+}
+#save-btn:hover {
+    background-color: #2980b9;
+}
+
+#reset-btn {
+    background-color: #E74C3C; /* 赤色 */
+}
+#reset-btn:hover {
+    background-color: #c0392b;
 }

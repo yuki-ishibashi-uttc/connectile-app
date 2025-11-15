@@ -8,70 +8,34 @@
 </head>
 <body>
     <h1>Connectile</h1>
-    <div id="game-board">
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
+
+    <div id="player-selector">
+        <button class="player-btn player1" data-player="1">Player 1 (赤)</button>
+        <button class="player-btn player2" data-player="2">Player 2 (青)</button>
+        <button class="player-btn player3" data-player="3">Player 3 (黄)</button>
+        <button class="player-btn player4" data-player="4">Player 4 (緑)</button>
     </div>
+    <p>現在のアクティブプレイヤー: <span id="current-player-display">なし</span></p>
+
+    <div id="action-panel">
+        <div class="point-display">
+            <p>P1 ポイント: <span id="points-p1">0</span></p>
+            <p>P2 ポイント: <span id="points-p2">0</span></p>
+            <p>P3 ポイント: <span id="points-p3">0</span></p>
+            <p>P4 ポイント: <span id="points-p4">0</span></p>
+        </div>
+        <div class="input-form">
+            <input type="number" id="distance-input" placeholder="走った距離(km)">
+            <button id="add-points-btn">ポイント追加</button>
+        </div>
+    </div> <div id="utility-panel">
+        <button id="save-btn">セーブ</button>
+        <button id="reset-btn">リセット</button>
+    </div>
+
+    <div id="game-board">
+        </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
