@@ -1,4 +1,4 @@
-// script.js (Lesson 17 - バックエンド接続版)
+// script.js (Lesson 19 - バグ修正版)
 
 console.log("JavaScriptファイルが読み込まれました！");
 
@@ -8,10 +8,11 @@ const playerClasses = ['player1', 'player2', 'player3', 'player4'];
 let activePlayer = 0;
 
 // --- バックエンド（厨房）の「窓口」の住所 ---
-const API_URL = 'https://connectile-backend.onrender.com/api/gamestate/';
+// ★★★ここはあなたのRenderのURLに書き換えてください★★★
+const API_URL = 'https://connectile-backend.onrender.com/api/gamestate/'; 
+// (例：https://glittering-kheer-8ba521.netlify.app ではなく、RenderのURLです)
 
 // --- データ管理（グローバル変数） ---
-// これらの変数は、ロードが成功したときに上書きされます
 let playerPoints = { 1: 0, 2: 0, 3: 0, 4: 0 };
 let boardState = Array(BOARD_SIZE).fill(0).map(() => Array(BOARD_SIZE).fill(0));
 
@@ -21,30 +22,26 @@ const playerButtons = document.querySelectorAll('.player-btn');
 const currentPlayerDisplay = document.getElementById('current-player-display');
 const distanceInput = document.getElementById('distance-input');
 const addPointsBtn = document.getElementById('add-points-btn');
-// saveBtnはもう使いません
-// const saveBtn = document.getElementById('save-btn');
 const resetBtn = document.getElementById('reset-btn');
 const pointDisplays = {
     1: document.getElementById('points-p1'),
     2: document.getElementById('points-p2'),
     3: document.getElementById('points-p3'),
-    4: document.getElementById('points-p4'), // 4. だったのを 4: に修正
+    4: document.getElementById('points-p4'),
 };
 
-// --- ★★★★★ バックエンド通信機能 ★★★★★ ---
+// --- バックエンド通信機能 ---
 
-// 【新しいロード機能】バックエンドから最新データを「もらう」(GET)
 async function loadGame() {
     console.log("バックエンドからデータをロードします...");
     try {
-        const response = await fetch(API_URL); // APIに「データちょうだい」とリクエスト
-        if (!response.ok) { // もし失敗したら
+        const response = await fetch(API_URL); 
+        if (!response.ok) { 
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json(); // 届いたJSONデータをJavaScriptのオブジェクトに翻訳
+        const data = await response.json(); 
         
-        // グローバル変数をサーバーのデータで上書き
-        playerPoints = data.player1_points === undefined ? playerPoints : {
+        playerPoints = {
             1: data.player1_points,
             2: data.player2_points,
             3: data.player3_points,
@@ -54,7 +51,6 @@ async function loadGame() {
         
         console.log("ロード完了:", data);
         
-        // データをロードした後、画面を再描画
         updatePointDisplay();
         updateBoard();
         
@@ -64,12 +60,9 @@ async function loadGame() {
     }
 }
 
-// 【新しいセーブ機能】バックエンドに最新データを「送る」(PUT)
-// この関数は、何か変更があるたびに呼び出されます
 async function saveGame() {
     console.log("バックエンドにデータをセーブします...");
     
-    // バックエンドに送るための最新データ（JSON）を準備
     const gameState = {
         player1_points: playerPoints[1],
         player2_points: playerPoints[2],
@@ -80,18 +73,18 @@ async function saveGame() {
 
     try {
         const response = await fetch(API_URL, {
-            method: 'PUT', // 「上書き保存（PUT）」でリクエスト
+            method: 'PUT', 
             headers: {
-                'Content-Type': 'application/json', // 「JSONデータを送りますよ」という合図
+                'Content-Type': 'application/json', 
             },
-            body: JSON.stringify(gameState), // JavaScriptオブジェクトをJSON文字列に変換
+            body: JSON.stringify(gameState), 
         });
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const data = await response.json(); // 保存後のデータを一応受け取る
+        const data = await response.json(); 
         console.log("セーブ完了:", data);
         
     } catch (error) {
@@ -99,15 +92,15 @@ async function saveGame() {
     }
 }
 
-// --- ★★★★★ リセット機能 ★★★★★ ---
-
-// リセットは「データを初期化して、即セーブ」という動作に変わります
+// --- リセット機能 ---
 function resetGame() {
     if (confirm("本当にゲームをリセットしますか？")) {
         // ポイントをリセット
         playerPoints = { 1: 0, 2: 0, 3: 0, 4: 0 };
         // 盤面データをリセット（8x8の空の盤面）
         boardState = Array(BOARD_SIZE).fill(0).map(() => Array(BOARD_SIZE).fill(0));
+        
+        // ★ユーザーの要望により、初期配置はナシ（空の盤面）にする
 
         // 表示を更新
         updatePointDisplay();
@@ -121,9 +114,7 @@ function resetGame() {
 }
 
 // --- イベントリスナーの設定 ---
-// saveBtnのリスナーは削除します
-
-resetBtn.addEventListener('click', resetGame); // リセットボタン
+resetBtn.addEventListener('click', resetGame);
 
 // ポイント追加ボタンの処理
 addPointsBtn.addEventListener('click', () => {
@@ -131,6 +122,9 @@ addPointsBtn.addEventListener('click', () => {
         alert("先にアクティブなプレイヤーを選択してください。");
         return;
     }
+    
+    // ★★★「distance」を正しく定義し、「parseFloat」で小数を扱えるように修正★★★
+    const distance = parseFloat(distanceInput.value); 
     
     if (isNaN(distance) || distance <= 0) {
         alert("正しい距離をkm単位で入力してください。");
@@ -141,11 +135,10 @@ addPointsBtn.addEventListener('click', () => {
     updatePointDisplay();
     distanceInput.value = '';
     
-    // ポイントが変更されたので、バックエンドに「セーブ」する
     saveGame();
 });
 
-// プレイヤー選択ボタン（変更なし）
+// プレイヤー選択ボタン
 playerButtons.forEach(button => {
     button.addEventListener('click', () => {
         activePlayer = parseInt(button.dataset.player);
@@ -156,8 +149,7 @@ playerButtons.forEach(button => {
 });
 
 
-// --- メインロジック（変更あり） ---
-// script.js
+// --- メインロジック（コスト計算を修正） ---
 function handleSquareClick(event) {
     if (activePlayer === 0) { alert("先にプレイヤーを選択してください。"); return; }
 
@@ -170,9 +162,13 @@ function handleSquareClick(event) {
         return;
     }
 
-    // ★★★↓ここからロジックを全面変更↓★★★
-
     // 1. まず、データを「仮に」置いてみる
+    //    (元に戻す場合に備え、一時的なコピーで作業するのがベストだが、
+    //     ここでは簡潔さのため、一旦boardStateを直接変更し、失敗したらロードし直す)
+    
+    // 元の状態をバックアップ（失敗時に戻すため）
+    const originalBoardState = JSON.parse(JSON.stringify(boardState));
+
     boardState[row][col] = activePlayer;
     
     // 2. 「ひっくり返した枚数」を受け取る
@@ -187,9 +183,8 @@ function handleSquareClick(event) {
         alert(`ポイントが足りません！\nコスト: ${cost} (残り: ${playerPoints[activePlayer]})`);
         
         // ★重要★ 仮に置いたマスと、ひっくり返したデータを元に戻す
-        // (ロードし直すのが一番簡単)
-        loadGame(); // サーバーから元の状態をロードして全てを元通りにする
-        return;
+        boardState = originalBoardState;
+        return; // 何もせず終了
     }
 
     // 5. ポイントが足りたので、コストを消費する
@@ -197,7 +192,6 @@ function handleSquareClick(event) {
     updatePointDisplay();
 
     // 6. データを元にした最終的な盤面を再描画する
-    // (flipTilesが既にboardStateを書き換えているので、updateBoardだけでOK)
     updateBoard();
     
     // 7. 最終的な状態をバックエンドにセーブする
@@ -207,12 +201,13 @@ function handleSquareClick(event) {
     console.log(`コスト: ${cost} / 残りポイント: ${playerPoints[activePlayer]}`);
 }
 
-// --- ユーティリティ関数（変更なし） ---
+// --- ユーティリティ関数 ---
 
 function updatePointDisplay() {
     for (let i = 1; i <= 4; i++) {
-        if (pointDisplays[i]) { // エラー防止
-            pointDisplays[i].textContent = playerPoints[i] || 0;
+        if (pointDisplays[i]) { 
+            // toFixed(1) を使って、小数を第1位まで表示するように修正
+            pointDisplays[i].textContent = playerPoints[i] ? playerPoints[i].toFixed(1) : '0.0';
         }
     }
 }
@@ -226,8 +221,7 @@ function updateBoard() {
             square.dataset.row = row;
             square.dataset.col = col;
 
-            // boardStateがまだロードされていない可能性も考慮
-            const playerNumber = boardState[row] ? boardState[row][col] : 0;
+            const playerNumber = (boardState && boardState[row]) ? boardState[row][col] : 0;
             
             if (playerNumber > 0) {
                 square.classList.add(playerClasses[playerNumber - 1]);
@@ -238,6 +232,7 @@ function updateBoard() {
     }
 }
 
+// ★★★「ひっくり返した枚数」を返すように修正★★★
 function flipTiles(row, col, player) {
     const tilesToFlip = [];
     const directions = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
@@ -251,11 +246,13 @@ function flipTiles(row, col, player) {
             tilesToFlip.push(...line);
         }
     }
+    
     tilesToFlip.forEach(tile => {
         boardState[tile.r][tile.c] = player;
     });
-    return tilesToFlip.length;
 
+    // ひっくり返した枚数を返す
+    return tilesToFlip.length;
 }
 
 
