@@ -131,7 +131,7 @@ addPointsBtn.addEventListener('click', () => {
         alert("先にアクティブなプレイヤーを選択してください。");
         return;
     }
-    const distance = parseFloat(distanceInput.value);
+    
     if (isNaN(distance) || distance <= 0) {
         alert("正しい距離をkm単位で入力してください。");
         return;
@@ -157,10 +157,9 @@ playerButtons.forEach(button => {
 
 
 // --- メインロジック（変更あり） ---
-
+// script.js
 function handleSquareClick(event) {
     if (activePlayer === 0) { alert("先にプレイヤーを選択してください。"); return; }
-    if (playerPoints[activePlayer] <= 0) { alert("ポイントが足りません！"); return; }
 
     const clickedSquare = event.target;
     const row = parseInt(clickedSquare.dataset.row);
@@ -171,22 +170,41 @@ function handleSquareClick(event) {
         return;
     }
 
-    // ポイントを1消費
-    playerPoints[activePlayer]--;
+    // ★★★↓ここからロジックを全面変更↓★★★
+
+    // 1. まず、データを「仮に」置いてみる
+    boardState[row][col] = activePlayer;
+    
+    // 2. 「ひっくり返した枚数」を受け取る
+    const flippedCount = flipTiles(row, col, activePlayer);
+    
+    // 3. コストを計算する（置いた1マス + ひっくり返した枚数）
+    const cost = 1 + flippedCount;
+
+    // 4. ポイントが足りるかチェックする
+    if (playerPoints[activePlayer] < cost) {
+        // ポイントが足りない！
+        alert(`ポイントが足りません！\nコスト: ${cost} (残り: ${playerPoints[activePlayer]})`);
+        
+        // ★重要★ 仮に置いたマスと、ひっくり返したデータを元に戻す
+        // (ロードし直すのが一番簡単)
+        loadGame(); // サーバーから元の状態をロードして全てを元通りにする
+        return;
+    }
+
+    // 5. ポイントが足りたので、コストを消費する
+    playerPoints[activePlayer] -= cost;
     updatePointDisplay();
 
-    // データを更新
-    boardState[row][col] = activePlayer;
-    flipTiles(row, col, activePlayer);
-    
-    // 盤面を再描画
+    // 6. データを元にした最終的な盤面を再描画する
+    // (flipTilesが既にboardStateを書き換えているので、updateBoardだけでOK)
     updateBoard();
     
-    // ★★★最重要★★★
-    // マスを置いた（＝データが変更された）ので、バックエンドに「セーブ」する
+    // 7. 最終的な状態をバックエンドにセーブする
     saveGame();
     
-    console.log(`プレイヤー${activePlayer}が [${row}][${col}] にマスを置きました。`);
+    console.log(`プレイヤー${activePlayer}が [${row}][${col}] にマスを置き、${flippedCount}枚ひっくり返しました。`);
+    console.log(`コスト: ${cost} / 残りポイント: ${playerPoints[activePlayer]}`);
 }
 
 // --- ユーティリティ関数（変更なし） ---
@@ -236,6 +254,8 @@ function flipTiles(row, col, player) {
     tilesToFlip.forEach(tile => {
         boardState[tile.r][tile.c] = player;
     });
+    return tilesToFlip.length;
+
 }
 
 
