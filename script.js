@@ -1,4 +1,4 @@
-// script.js (Lesson 19 - バグ修正版)
+// script.js (最終FIX版 - 音楽トリガーを「初回クリック」に変更)
 
 console.log("JavaScriptファイルが読み込まれました！");
 
@@ -10,7 +10,7 @@ let activePlayer = 0;
 // --- バックエンド（厨房）の「窓口」の住所 ---
 // ★★★ここはあなたのRenderのURLに書き換えてください★★★
 const API_URL = 'https://connectile-backend.onrender.com/api/gamestate/'; 
-// (例：https://glittering-kheer-8ba521.netlify.app ではなく、RenderのURLです)
+// (例： 'https://connectile-backend-xxxxx.onrender.com/api/gamestate/' )
 
 // --- データ管理（グローバル変数） ---
 let playerPoints = { 1: 0, 2: 0, 3: 0, 4: 0 };
@@ -29,6 +29,9 @@ const pointDisplays = {
     3: document.getElementById('points-p3'),
     4: document.getElementById('points-p4'),
 };
+// BGM用のDOM取得
+const musicPlayer = document.getElementById('bg-music');
+
 
 // --- バックエンド通信機能 ---
 
@@ -100,7 +103,7 @@ function resetGame() {
         // 盤面データをリセット（8x8の空の盤面）
         boardState = Array(BOARD_SIZE).fill(0).map(() => Array(BOARD_SIZE).fill(0));
         
-        // ★ユーザーの要望により、初期配置はナシ（空の盤面）にする
+        // （初期配置はナシ）
 
         // 表示を更新
         updatePointDisplay();
@@ -113,6 +116,19 @@ function resetGame() {
     }
 }
 
+// --- ★★★ BGM再生ロジック ★★★ ---
+// 「最初の一回のクリック」で音楽を再生するための関数
+function playMusicOnFirstClick() {
+    if (musicPlayer && musicPlayer.paused) {
+        musicPlayer.play().catch(error => {
+            console.log("音楽の再生がブラウザにブロックされました:", error);
+        });
+    }
+    // 一度実行したら、この監視は解除する（二度と実行されない）
+    document.body.removeEventListener('click', playMusicOnFirstClick);
+}
+
+
 // --- イベントリスナーの設定 ---
 resetBtn.addEventListener('click', resetGame);
 
@@ -123,7 +139,7 @@ addPointsBtn.addEventListener('click', () => {
         return;
     }
     
-    // ★★★「distance」を正しく定義し、「parseFloat」で小数を扱えるように修正★★★
+    // 「parseFloat」で小数を扱えるように修正
     const distance = parseFloat(distanceInput.value); 
     
     if (isNaN(distance) || distance <= 0) {
@@ -136,6 +152,8 @@ addPointsBtn.addEventListener('click', () => {
     distanceInput.value = '';
     
     saveGame();
+
+    // ★★★ BGMの再生トリガーをここから削除 ★★★
 });
 
 // プレイヤー選択ボタン
@@ -147,6 +165,9 @@ playerButtons.forEach(button => {
         button.classList.add('active');
     });
 });
+
+// ★★★ ページ全体の「初回クリック」を監視 ★★★
+document.body.addEventListener('click', playMusicOnFirstClick);
 
 
 // --- メインロジック（コスト計算を修正） ---
@@ -162,13 +183,10 @@ function handleSquareClick(event) {
         return;
     }
 
-    // 1. まず、データを「仮に」置いてみる
-    //    (元に戻す場合に備え、一時的なコピーで作業するのがベストだが、
-    //     ここでは簡潔さのため、一旦boardStateを直接変更し、失敗したらロードし直す)
-    
     // 元の状態をバックアップ（失敗時に戻すため）
     const originalBoardState = JSON.parse(JSON.stringify(boardState));
 
+    // 1. まず、データを「仮に」置いてみる
     boardState[row][col] = activePlayer;
     
     // 2. 「ひっくり返した枚数」を受け取る
@@ -180,7 +198,7 @@ function handleSquareClick(event) {
     // 4. ポイントが足りるかチェックする
     if (playerPoints[activePlayer] < cost) {
         // ポイントが足りない！
-        alert(`ポイントが足りません！\nコスト: ${cost} (残り: ${playerPoints[activePlayer]})`);
+        alert(`ポイントが足りません！\nコスト: ${cost} (残り: ${playerPoints[activePlayer].toFixed(1)})`);
         
         // ★重要★ 仮に置いたマスと、ひっくり返したデータを元に戻す
         boardState = originalBoardState;
@@ -232,7 +250,7 @@ function updateBoard() {
     }
 }
 
-// ★★★「ひっくり返した枚数」を返すように修正★★★
+// 「ひっくり返した枚数」を返すように修正
 function flipTiles(row, col, player) {
     const tilesToFlip = [];
     const directions = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
